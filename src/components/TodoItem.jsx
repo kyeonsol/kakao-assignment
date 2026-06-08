@@ -1,15 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 /**
  * TodoItem 컴포넌트
  * - 개별 Todo 항목을 렌더링
- * - isEditing 상태로 뷰 모드 ↔ 수정 모드 전환 (prompt() 대신 인라인 입력창 사용)
+ * - isEditing 상태로 뷰 모드 ↔ 수정 모드 전환
  * - 완료 / 수정 / 삭제 기능 버튼 포함
  */
 function TodoItem({ todo, onToggleComplete, onEdit, onDelete }) {
-  const [isEditing, setIsEditing] = useState(false); // 수정 모드 활성화 여부
-  const [editValue, setEditValue] = useState(todo.text); // 수정 중인 텍스트 값
-  const [editError, setEditError] = useState(""); // 수정 입력 유효성 오류
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(todo.text);
+  const [editError, setEditError] = useState("");
+
+  // 외부에서 todo.text가 변경될 경우 editValue 동기화
+  useEffect(() => {
+    setEditValue(todo.text);
+  }, [todo.text]);
 
   // 수정 저장 핸들러
   const handleSave = () => {
@@ -18,7 +23,7 @@ function TodoItem({ todo, onToggleComplete, onEdit, onDelete }) {
       setEditError("내용을 입력해주세요!");
       return;
     }
-    onEdit(todo.id, trimmed); // 부모 컴포넌트에 수정된 텍스트 전달
+    onEdit(todo.id, trimmed);
     setIsEditing(false);
     setEditError("");
   };
@@ -30,7 +35,7 @@ function TodoItem({ todo, onToggleComplete, onEdit, onDelete }) {
     setEditError("");
   };
 
-  // 수정 입력창에서 Enter 키로 저장, Escape 키로 취소
+  // Enter: 저장 / Escape: 취소
   const handleKeyDown = (e) => {
     if (e.key === "Enter") handleSave();
     if (e.key === "Escape") handleCancelEdit();
@@ -63,7 +68,6 @@ function TodoItem({ todo, onToggleComplete, onEdit, onDelete }) {
         <>
           <span className="todo-text">{todo.text}</span>
           <div className="btn-group">
-            {/* 완료 토글 버튼 */}
             <button
               className="complete-btn"
               onClick={() => onToggleComplete(todo.id)}
@@ -79,7 +83,6 @@ function TodoItem({ todo, onToggleComplete, onEdit, onDelete }) {
                 수정
               </button>
             )}
-            {/* 삭제 버튼 */}
             <button
               className="delete-btn"
               onClick={() => onDelete(todo.id)}

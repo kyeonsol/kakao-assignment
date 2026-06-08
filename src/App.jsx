@@ -3,15 +3,8 @@ import TodoInput from "./components/TodoInput";
 import TodoList from "./components/TodoList";
 import FilterTab from "./components/FilterTab";
 import WeeklyCalendar from "./components/WeeklyCalendar";
-
-// 주어진 날짜가 속한 주의 월요일 날짜를 "YYYY-MM-DD"로 반환하는 헬퍼 함수
-function getMondayOfWeek(dateStr) {
-  const d = new Date(dateStr);
-  const day = d.getUTCDay();
-  const distToMonday = day === 0 ? -6 : 1 - day;
-  d.setUTCDate(d.getUTCDate() + distToMonday);
-  return d.toISOString().split("T")[0];
-}
+import { getMondayOfWeek, getTodayStr } from "./utils/dateUtils";
+import { createTodo } from "./utils/todoUtils";
 
 /**
  * App 컴포넌트 (루트 컴포넌트)
@@ -31,16 +24,14 @@ function App() {
 
   const [currentFilter, setCurrentFilter] = useState("all");
 
-  // selectedDate: 주간 뷰가 공유하는 "선택된 날짜"
-  const [selectedDate, setSelectedDate] = useState(
-    () => new Date().toISOString().split("T")[0]
-  );
+  // selectedDate: 주간 뷰가 공유하는 "선택된 날짜", 오늘로 초기화
+  const [selectedDate, setSelectedDate] = useState(getTodayStr);
 
   // weekStartDate: 주간 뷰에서 현재 보여주는 주의 월요일
+  // 로컬스토리지에서 복원하고, 없으면 오늘이 속한 주의 월요일로 초기화
   const [weekStartDate, setWeekStartDate] = useState(() => {
     const saved = localStorage.getItem("weekStartDate");
-    if (saved) return saved;
-    return getMondayOfWeek(new Date().toISOString().split("T")[0]);
+    return saved ?? getMondayOfWeek(getTodayStr());
   });
 
   // todos 변경 시 자동 저장
@@ -53,12 +44,9 @@ function App() {
     localStorage.setItem("weekStartDate", weekStartDate);
   }, [weekStartDate]);
 
-  // Todo 추가 — 현재 선택된 날짜를 date 필드에 저장
+  // Todo 추가 — createTodo 팩토리 함수로 객체 생성
   const handleAddTodo = (text) => {
-    setTodos((prev) => [
-      ...prev,
-      { id: Date.now(), text, completed: false, date: selectedDate },
-    ]);
+    setTodos((prev) => [...prev, createTodo(text, selectedDate)]);
   };
 
   const handleToggleComplete = (id) => {
