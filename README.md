@@ -9,7 +9,6 @@ Vanilla JS로 제작한 프로젝트를 React + Vite + Tailwind CSS 기반으로
 
 - **Todo CRUD** — 할 일 추가 / 수정 (인라인 편집) / 완료 처리 / 삭제
 - **상태별 필터링** — 전체 / 진행 중 / 완료 탭으로 분류해서 보기
-- **일간 뷰** — 이전·다음 버튼으로 날짜를 하루씩 이동, 선택한 날짜의 Todo만 표시
 - **주간 뷰** — 이번 주 월~일 캘린더, 날짜 카드 클릭으로 일간 뷰와 동기화
 - **데이터 영속성** — localStorage에 자동 저장, 새로고침 후에도 데이터 유지
 - **빈 상태 처리** — 할 일이 없을 때 안내 메시지 표시
@@ -37,7 +36,6 @@ src/
 ├── index.css                # 전역 스타일 및 CSS 변수
 └── components/
     ├── WeeklyCalendar.jsx   # 주간 캘린더 (주 이동, 날짜 선택)
-    ├── DateNavigator.jsx    # 일간 날짜 이동 네비게이터
     ├── TodoInput.jsx        # Todo 입력 폼
     ├── TodoList.jsx         # Todo 목록 렌더링
     ├── TodoItem.jsx         # 개별 Todo 항목 (인라인 수정 포함)
